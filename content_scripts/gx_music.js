@@ -1,3 +1,7 @@
+browser.runtime.sendMessage({
+  intent: "tryWebMods",
+})
+
 function sendKeyboardCommand(event) {
   if (!event.repeat) {
     if (!(event.code.startsWith("Arrow"))) {
@@ -53,6 +57,11 @@ function sendCheckedEvent(event) {
   }
 }
 
+function sendFocusChange(event) {
+  browser.runtime.sendMessage('focus=' + document.hasFocus());
+}
+
+
 (function() {
   window.addEventListener('mousedown',() => {
     browser.runtime.sendMessage('mousedown')
@@ -62,6 +71,16 @@ function sendCheckedEvent(event) {
     once: false,
     passive: true
   })
+  window.addEventListener("blur", sendFocusChange,{
+    capture: true,
+    once: false,
+    passive: true
+  });
+  window.addEventListener("focus", sendFocusChange,{
+    capture: true,
+    once: false,
+    passive: true
+  });
   document.addEventListener('mouseover',sendCursorEvent,{
     capture: true,
     once: false,
